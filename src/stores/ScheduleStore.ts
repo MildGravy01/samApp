@@ -10,12 +10,14 @@ class ScheduleStore {
   selectedWeekSchedule: ISchedule[] | null = null;
   availableWeeks: IWeek[] | null = null;
   activeDays: MarkedDates | null = null;
+  isScheduleLoading: boolean = false;
   constructor() {
     makeObservable(this, {
       selectedDate: observable,
       selectedWeekSchedule: observable,
       availableWeeks: observable,
       activeDays: observable,
+      isScheduleLoading: observable,
       loadSchedule: action.bound,
       setSelectedDate: action.bound,
     });
@@ -24,6 +26,9 @@ class ScheduleStore {
 
   async loadSchedule() {
     try {
+      runInAction(() => {
+        this.isScheduleLoading = true;
+      });
       const scheduleResult = (
         await scheduleService.getSchedule(
           this.selectedDate,
@@ -54,6 +59,10 @@ class ScheduleStore {
       });
     } catch (err) {
       console.error(err);
+    } finally {
+      runInAction(() => {
+        this.isScheduleLoading = false;
+      });
     }
   }
 

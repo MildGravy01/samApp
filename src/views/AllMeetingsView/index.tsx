@@ -1,5 +1,12 @@
 import React, {useCallback, useEffect} from 'react';
-import {FlatList, SectionList, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import MeetingItem from '../../components/MeetingItem';
 import WeekItem from '../../components/WeekItem';
 import {scheduleStore} from '../../stores/ScheduleStore';
@@ -22,6 +29,7 @@ export const AllMeetingsView = observer((): JSX.Element => {
     selectedDate,
     setSelectedDate,
     activeDays,
+    isScheduleLoading,
   } = scheduleStore;
 
   const {currentFilter} = filterStore;
@@ -49,40 +57,49 @@ export const AllMeetingsView = observer((): JSX.Element => {
 
   return (
     <View style={styles.container}>
-      {availableWeeks && (
-        <FlatList<IWeek>
-          style={styles.weekList}
-          contentContainerStyle={styles.weekListContainer}
-          ListFooterComponentStyle={{margin: 0, padding: 0, height: 0}}
-          horizontal
-          renderItem={({item}) =>
-            renderWeekItem({
-              item,
-              onPress: () => setSelectedDate(new Date(item.weekStart)),
-              isSelected:
-                selectedDate.getDate() >= new Date(item.weekStart).getDate() &&
-                selectedDate.getDate() <= new Date(item.weekEnd).getDate(),
-            })
-          }
-          data={availableWeeks}
-          keyExtractor={(item, index) => item.weekStart + index}
-        />
-      )}
-      {selectedWeekSchedule ? (
-        <SectionList
-          sections={selectedWeekSchedule}
-          keyExtractor={(item, index) => item.title + index}
-          renderItem={renderMeetingItem}
-          renderSectionHeader={({section: {title}}) => (
-            <Text style={styles.header}>
-              {format(title, 'EEEE, d MMMM', {locale: ru})}
-            </Text>
-          )}
-        />
-      ) : (
+      {isScheduleLoading ? (
         <View style={styles.center}>
-          <Text style={styles.center}>Нет запланированных мероприятий</Text>
+          <ActivityIndicator />
         </View>
+      ) : (
+        <>
+          {availableWeeks && (
+            <FlatList<IWeek>
+              style={styles.weekList}
+              contentContainerStyle={styles.weekListContainer}
+              ListFooterComponentStyle={{margin: 0, padding: 0, height: 0}}
+              horizontal
+              renderItem={({item}) =>
+                renderWeekItem({
+                  item,
+                  onPress: () => setSelectedDate(new Date(item.weekStart)),
+                  isSelected:
+                    selectedDate.getDate() >=
+                      new Date(item.weekStart).getDate() &&
+                    selectedDate.getDate() <= new Date(item.weekEnd).getDate(),
+                })
+              }
+              data={availableWeeks}
+              keyExtractor={(item, index) => item.weekStart + index}
+            />
+          )}
+          {selectedWeekSchedule ? (
+            <SectionList
+              sections={selectedWeekSchedule}
+              keyExtractor={(item, index) => item.title + index}
+              renderItem={renderMeetingItem}
+              renderSectionHeader={({section: {title}}) => (
+                <Text style={styles.header}>
+                  {format(title, 'EEEE, d MMMM', {locale: ru})}
+                </Text>
+              )}
+            />
+          ) : (
+            <View style={styles.center}>
+              <Text style={styles.center}>Нет запланированных мероприятий</Text>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
