@@ -28,6 +28,7 @@ export const AllMeetingsView = observer((): JSX.Element => {
     availableWeeks,
     selectedDate,
     setSelectedDate,
+    loadSchedule,
     activeDays,
     isScheduleLoading,
   } = scheduleStore;
@@ -88,6 +89,8 @@ export const AllMeetingsView = observer((): JSX.Element => {
               sections={selectedWeekSchedule}
               keyExtractor={(item, index) => item.title + index}
               renderItem={renderMeetingItem}
+              onRefresh={loadSchedule}
+              refreshing={isScheduleLoading}
               renderSectionHeader={({section: {title}}) => (
                 <Text style={styles.header}>
                   {format(title, 'EEEE, d MMMM', {locale: ru})}
