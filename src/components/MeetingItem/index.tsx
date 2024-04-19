@@ -1,10 +1,10 @@
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import React from 'react';
 import {IMeeting} from '../../api/types';
-import {addMinutes, format} from 'date-fns';
+import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 
-export interface IMeetingItemProps{
+export interface IMeetingItemProps {
   item: IMeeting;
   handlePress: () => void;
 }
@@ -58,17 +58,9 @@ const MeetingItem = ({item, handlePress}: IMeetingItemProps): JSX.Element => {
       </View>
     );
   }
-  const startTime = format(
-    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
-    'HH:mm',
-    {locale: ru},
-  );
+  const startTime = format(item.startTime, 'HH:mm', {locale: ru});
 
-  const endTime = format(
-    addMinutes(item.endTime, new Date(item.endTime).getTimezoneOffset()),
-    'HH:mm',
-    {locale: ru},
-  );
+  const endTime = format(item.endTime, 'HH:mm', {locale: ru});
 
   return (
     <TouchableHighlight onPress={handlePress}>

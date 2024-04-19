@@ -2,7 +2,7 @@
 import React from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {MeetingDetailScreenRouteProp} from '../../App';
-import {addMinutes, format} from 'date-fns';
+import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 
 type Props = {
@@ -55,24 +55,11 @@ export const MeetingView: React.FC<Props> = ({route}) => {
   });
   const {item} = route.params;
 
-  const startTime = format(
-    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
-    'HH:mm',
-    {locale: ru},
-  );
+  const startTime = format(item.startTime, 'HH:mm', {locale: ru});
 
-  const endTime = format(
-    addMinutes(item.endTime, new Date(item.endTime).getTimezoneOffset()),
-    'HH:mm',
-    {locale: ru},
-  );
+  const endTime = format(item.endTime, 'HH:mm', {locale: ru});
 
-  const date = format(
-    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
-    'EEEE, d MMMM',
-    {locale: ru},
-  );
-  console.log('img url', item.imgUrl);
+  const date = format(item.startTime, 'EEEE, d MMMM', {locale: ru});
   return (
     <View style={styles.container}>
       <Text style={styles.typeStyle}>{item.type.name}</Text>

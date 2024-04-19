@@ -18,7 +18,7 @@ import {filterStore} from './stores/FilterStore';
 import {DatePickerView} from './views/DatePickerView';
 import {initCalendarLocale} from './views/DatePickerView/locale';
 import {MarkedDates} from 'react-native-calendars/src/types';
-import ErrorBoundary from './components/ ErrorBoundary';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export type RootStackParamList = {
   MeetingsList: undefined;

@@ -47,16 +47,6 @@ class ScheduleStore {
         {},
       );
       runInAction(() => {
-        if (
-          scheduleResult.schedule.length === 0 &&
-          scheduleResult.availableWeeks?.length > 0
-        ) {
-          this.selectedDate = new Date(
-            scheduleResult.availableWeeks[0].weekStart,
-          );
-          this.loadSchedule();
-          return;
-        }
         this.availableWeeks = scheduleResult.availableWeeks;
         this.selectedWeekSchedule = scheduleResult.schedule;
         this.activeDays = activeDays;
@@ -73,7 +63,7 @@ class ScheduleStore {
   }
 
   setSelectedDate(day: Date) {
-    this.selectedDate = day;
+    this.selectedDate = new Date(day.toUTCString());
     this.loadSchedule(false);
   }
 

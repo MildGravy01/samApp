@@ -62,8 +62,8 @@ export const AllMeetingsView = observer((): JSX.Element => {
               item,
               onPress: () => setSelectedDate(new Date(item.weekStart)),
               isSelected:
-                selectedDate.getDate() >= new Date(item.weekStart).getDate() &&
-                selectedDate.getDate() <= new Date(item.weekEnd).getDate(),
+                selectedDate >= new Date(item.weekStart) &&
+                selectedDate <= new Date(item.weekEnd),
             })
           }
           data={availableWeeks}
