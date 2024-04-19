@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useCallback} from 'react';
 import {IWeek} from '../../api/types';
-import {addMinutes, format} from 'date-fns';
+import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 
 export interface IWeekItemProps {
