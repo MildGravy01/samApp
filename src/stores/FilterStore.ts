@@ -1,4 +1,4 @@
-import {action, makeObservable, observable} from 'mobx';
+import {action, makeObservable, observable, runInAction} from 'mobx';
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons';
 import {
   faClock,
@@ -30,11 +30,13 @@ class FilterStore {
     });
   }
 
-  setFilter(filterId: string) {
+  async setFilter(filterId: string) {
     const filter = this.availableFilters.find(item => item.id === filterId);
     if (filter) {
-      this.currentFilter = filter;
-      scheduleStore.loadSchedule();
+      runInAction(() => {
+        this.currentFilter = filter;
+      });
+      await scheduleStore.loadSchedule(false);
     }
   }
 }

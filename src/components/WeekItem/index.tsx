@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useCallback} from 'react';
 import {IWeek} from '../../api/types';
-import {format} from 'date-fns';
+import {addMinutes, format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 
 export interface IWeekItemProps {
@@ -26,17 +26,14 @@ const WeekItem = ({item, onPress, isSelected}: IWeekItemProps): JSX.Element => {
   });
 
   const itemPressed = useCallback(onPress, [onPress]);
-
+  const weekStart = format(item.weekStart, 'd MMM', {locale: ru});
+  const weekEnd = format(item.weekEnd, 'd MMM', {locale: ru});
   return (
     <TouchableOpacity onPress={itemPressed}>
       <View style={styles.item}>
-        <Text style={styles.text}>
-          {format(item.weekStart, 'd MMM', {locale: ru})}
-        </Text>
+        <Text style={styles.text}>{weekStart}</Text>
         <Text style={styles.text}>-</Text>
-        <Text style={styles.text}>
-          {format(item.weekEnd, 'd MMM', {locale: ru})}
-        </Text>
+        <Text style={styles.text}>{weekEnd}</Text>
       </View>
     </TouchableOpacity>
   );

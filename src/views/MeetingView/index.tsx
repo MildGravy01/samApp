@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {MeetingDetailScreenRouteProp} from '../../App';
-import {format} from 'date-fns';
-
+import {addMinutes, format} from 'date-fns';
 import {ru} from 'date-fns/locale';
+
 type Props = {
   route: MeetingDetailScreenRouteProp;
 };
@@ -25,10 +25,13 @@ export const MeetingView: React.FC<Props> = ({route}) => {
       color: '#007AFF',
     },
     titleImg: {
-      height: 100,
-      width: 100,
-      backgroundColor: 'black',
       borderRadius: 10,
+      backgroundColor: '#575757',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 100,
+      height: 100,
+      overflow: 'hidden',
     },
     titleContainer: {
       display: 'flex',
@@ -51,29 +54,57 @@ export const MeetingView: React.FC<Props> = ({route}) => {
     },
   });
   const {item} = route.params;
+
+  const startTime = format(
+    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
+    'HH:mm',
+    {locale: ru},
+  );
+
+  const endTime = format(
+    addMinutes(item.endTime, new Date(item.endTime).getTimezoneOffset()),
+    'HH:mm',
+    {locale: ru},
+  );
+
+  const date = format(
+    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
+    'EEEE, d MMMM',
+    {locale: ru},
+  );
+  console.log('img url', item.imgUrl);
   return (
     <View style={styles.container}>
       <Text style={styles.typeStyle}>{item.type.name}</Text>
       <View style={styles.titleContainer}>
-        <View style={styles.titleImg} />
+        <View style={styles.titleImg}>
+          {item.imgUrl ? (
+            <Image
+              width={100}
+              height={100}
+              source={{width: 100, height: 100, uri: item.imgUrl}}
+            />
+          ) : (
+            <Text style={{color: '#FFF'}}>Нет фото</Text>
+          )}
+        </View>
         <Text style={styles.title}>{item.title}</Text>
       </View>
       <View style={styles.infoContainer}>
-        <Text style={{color: '#8E8E93'}}>
-          {format(item.startTime, 'EEEE, d MMMM', {locale: ru})}
-        </Text>
+        <Text style={{color: '#8E8E93'}}>{date}</Text>
         <Text>
-          {format(item.startTime, 'HH:mm')} - {format(item.endTime, 'HH:mm')}
+          {startTime}- {endTime}
         </Text>
       </View>
       <View style={styles.infoContainer}>
+        <Text style={{color: '#8E8E93', fontWeight: '500'}}>Место</Text>
         <Text>{item.location}</Text>
       </View>
       <View>
         <Text style={{color: '#8E8E93', fontWeight: '500'}}>
           Информация о событии
         </Text>
-        <Text>{item.description}</Text>
+        <Text>{item.description ?? 'Нет информации'}</Text>
       </View>
     </View>
   );

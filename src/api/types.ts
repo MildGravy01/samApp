@@ -4,7 +4,7 @@ export interface IMeeting {
   location: string;
   startTime: string;
   endTime: string;
-  img?: string;
+  imgUrl?: string;
   description?: string;
 }
 

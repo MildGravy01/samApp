@@ -7,10 +7,11 @@ import {getCalendarDateString} from 'react-native-calendars/src/services';
 
 class ScheduleStore {
   selectedDate: Date = new Date();
-  selectedWeekSchedule: ISchedule[] | null = null;
+  selectedWeekSchedule: ISchedule[] = [];
   availableWeeks: IWeek[] | null = null;
   activeDays: MarkedDates | null = null;
   isScheduleLoading: boolean = false;
+  networkError: string | null = null;
   constructor() {
     makeObservable(this, {
       selectedDate: observable,
@@ -18,16 +19,19 @@ class ScheduleStore {
       availableWeeks: observable,
       activeDays: observable,
       isScheduleLoading: observable,
+      networkError: observable,
       loadSchedule: action.bound,
       setSelectedDate: action.bound,
+      setNetworkError: action,
     });
     this.loadSchedule();
   }
 
-  async loadSchedule() {
+  async loadSchedule(setIsLoading = true) {
     try {
       runInAction(() => {
-        this.isScheduleLoading = true;
+        this.isScheduleLoading = !!setIsLoading;
+        this.setNetworkError(null);
       });
       const scheduleResult = (
         await scheduleService.getSchedule(
@@ -58,7 +62,9 @@ class ScheduleStore {
         this.activeDays = activeDays;
       });
     } catch (err) {
-      console.error(err);
+      this.setNetworkError(
+        'Не удалось загрузить расписание. Нет соединения с сервером, попробуйте позже.',
+      );
     } finally {
       runInAction(() => {
         this.isScheduleLoading = false;
@@ -68,7 +74,11 @@ class ScheduleStore {
 
   setSelectedDate(day: Date) {
     this.selectedDate = day;
-    this.loadSchedule();
+    this.loadSchedule(false);
+  }
+
+  setNetworkError(error: string | null) {
+    this.networkError = error;
   }
 }
 

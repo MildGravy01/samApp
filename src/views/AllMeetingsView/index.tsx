@@ -1,13 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  SectionList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import MeetingItem from '../../components/MeetingItem';
+import {FlatList, SectionList, StyleSheet, Text, View} from 'react-native';
+import MeetingItem, {IMeetingItemProps} from '../../components/MeetingItem';
 import WeekItem from '../../components/WeekItem';
 import {scheduleStore} from '../../stores/ScheduleStore';
 import {observer} from 'mobx-react';
@@ -20,9 +13,11 @@ import {filterStore} from '../../stores/FilterStore';
 import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
 import {IWeekItemProps} from '../../components/WeekItem';
-import {IWeek} from '../../api/types';
+import {IMeeting, IWeek} from '../../api/types';
 
 export const AllMeetingsView = observer((): JSX.Element => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     selectedWeekSchedule,
     availableWeeks,
@@ -31,12 +26,10 @@ export const AllMeetingsView = observer((): JSX.Element => {
     loadSchedule,
     activeDays,
     isScheduleLoading,
+    networkError,
   } = scheduleStore;
 
   const {currentFilter} = filterStore;
-
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     navigation.setOptions({
@@ -52,58 +45,58 @@ export const AllMeetingsView = observer((): JSX.Element => {
     return <WeekItem {...props} />;
   }, []);
 
-  const renderMeetingItem = useCallback(({item}: any) => {
-    return <MeetingItem {...item} />;
+  const renderMeetingItem = useCallback((props: IMeetingItemProps) => {
+    return <MeetingItem {...props} />;
   }, []);
 
   return (
     <View style={styles.container}>
-      {isScheduleLoading ? (
-        <View style={styles.center}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <>
-          {availableWeeks && (
-            <FlatList<IWeek>
-              style={styles.weekList}
-              contentContainerStyle={styles.weekListContainer}
-              ListFooterComponentStyle={{margin: 0, padding: 0, height: 0}}
-              horizontal
-              renderItem={({item}) =>
-                renderWeekItem({
-                  item,
-                  onPress: () => setSelectedDate(new Date(item.weekStart)),
-                  isSelected:
-                    selectedDate.getDate() >=
-                      new Date(item.weekStart).getDate() &&
-                    selectedDate.getDate() <= new Date(item.weekEnd).getDate(),
-                })
-              }
-              data={availableWeeks}
-              keyExtractor={(item, index) => item.weekStart + index}
-            />
-          )}
-          {selectedWeekSchedule ? (
-            <SectionList
-              sections={selectedWeekSchedule}
-              keyExtractor={(item, index) => item.title + index}
-              renderItem={renderMeetingItem}
-              onRefresh={loadSchedule}
-              refreshing={isScheduleLoading}
-              renderSectionHeader={({section: {title}}) => (
-                <Text style={styles.header}>
-                  {format(title, 'EEEE, d MMMM', {locale: ru})}
-                </Text>
-              )}
-            />
-          ) : (
-            <View style={styles.center}>
-              <Text style={styles.center}>Нет запланированных мероприятий</Text>
-            </View>
-          )}
-        </>
+      {availableWeeks && (
+        <FlatList<IWeek>
+          style={styles.weekList}
+          contentContainerStyle={styles.weekListContainer}
+          ListFooterComponentStyle={{margin: 0, padding: 0, height: 0}}
+          horizontal
+          renderItem={({item}) =>
+            renderWeekItem({
+              item,
+              onPress: () => setSelectedDate(new Date(item.weekStart)),
+              isSelected:
+                selectedDate.getDate() >= new Date(item.weekStart).getDate() &&
+                selectedDate.getDate() <= new Date(item.weekEnd).getDate(),
+            })
+          }
+          data={availableWeeks}
+          keyExtractor={(item, index) => item.weekStart + index}
+        />
       )}
+      <SectionList
+        sections={selectedWeekSchedule}
+        keyExtractor={(item, index) => item.title + index}
+        renderItem={({item}) =>
+          renderMeetingItem({
+            item: item as IMeeting,
+            handlePress: () =>
+              navigation.navigate('MeetingDetail', {
+                item: item as IMeeting,
+              }),
+          })
+        }
+        onRefresh={loadSchedule}
+        refreshing={isScheduleLoading}
+        ListEmptyComponent={() => (
+          <View style={styles.center}>
+            <Text style={styles.center}>
+              {networkError ?? 'Нет запланированных мероприятий'}
+            </Text>
+          </View>
+        )}
+        renderSectionHeader={({section: {title}}) => (
+          <Text style={styles.header}>
+            {format(title, 'EEEE, d MMMM', {locale: ru})}
+          </Text>
+        )}
+      />
     </View>
   );
 });
@@ -111,7 +104,12 @@ export const AllMeetingsView = observer((): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F7F7F7',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    flexShrink: 2,
   },
+
   weekList: {
     paddingHorizontal: 6,
     paddingVertical: 15,
@@ -121,7 +119,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   center: {
-    height: '100%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -136,5 +133,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     color: '#8E8E93',
+    backgroundColor: '#F7F7F7',
   },
 });

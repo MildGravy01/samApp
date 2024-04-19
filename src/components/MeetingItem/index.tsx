@@ -1,17 +1,15 @@
 import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-import React, {useCallback} from 'react';
+import React from 'react';
 import {IMeeting} from '../../api/types';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
-import {format} from 'date-fns';
-export interface IMeetingItemProps extends IMeeting {
-  isDarkMode?: boolean;
+import {addMinutes, format} from 'date-fns';
+import {ru} from 'date-fns/locale';
+
+export interface IMeetingItemProps{
+  item: IMeeting;
+  handlePress: () => void;
 }
 
-const MeetingItem = (item?: IMeetingItemProps): JSX.Element => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+const MeetingItem = ({item, handlePress}: IMeetingItemProps): JSX.Element => {
   const styles = StyleSheet.create({
     item: {
       backgroundColor: '#FFF',
@@ -50,10 +48,6 @@ const MeetingItem = (item?: IMeetingItemProps): JSX.Element => {
     },
   });
 
-  const itemPressed = useCallback(() => {
-    navigation.navigate('MeetingDetail', {item: item as IMeeting});
-  }, [item, navigation]);
-
   if (!item?.title) {
     return (
       <View style={styles.item}>
@@ -64,15 +58,24 @@ const MeetingItem = (item?: IMeetingItemProps): JSX.Element => {
       </View>
     );
   }
+  const startTime = format(
+    addMinutes(item.startTime, new Date(item.startTime).getTimezoneOffset()),
+    'HH:mm',
+    {locale: ru},
+  );
+
+  const endTime = format(
+    addMinutes(item.endTime, new Date(item.endTime).getTimezoneOffset()),
+    'HH:mm',
+    {locale: ru},
+  );
 
   return (
-    <TouchableHighlight onPress={itemPressed}>
+    <TouchableHighlight onPress={handlePress}>
       <View style={styles.item}>
         <View style={styles.timeHolder}>
-          <Text style={styles.startTime}>
-            {format(item.startTime, 'HH:mm')}
-          </Text>
-          <Text style={styles.endTime}>{format(item.endTime, 'HH:mm')}</Text>
+          <Text style={styles.startTime}>{startTime}</Text>
+          <Text style={styles.endTime}>{endTime}</Text>
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.typeStyle}>{item.type.name}</Text>

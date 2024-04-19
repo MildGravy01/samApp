@@ -18,6 +18,7 @@ import {filterStore} from './stores/FilterStore';
 import {DatePickerView} from './views/DatePickerView';
 import {initCalendarLocale} from './views/DatePickerView/locale';
 import {MarkedDates} from 'react-native-calendars/src/types';
+import ErrorBoundary from './components/ ErrorBoundary';
 
 export type RootStackParamList = {
   MeetingsList: undefined;
@@ -44,35 +45,37 @@ function App(): JSX.Element {
   const {currentFilter} = filterStore;
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="MeetingsList" component={AllMeetingsView} />
-        <Stack.Screen
-          name="Filters"
-          component={FilterSelectorView}
-          options={{
-            headerBackVisible: true,
-            presentation: 'containedModal',
-            headerTitle: () => FilterButton(false, currentFilter),
-          }}
-        />
-        <Stack.Screen
-          name="MeetingDetail"
-          component={MeetingView}
-          options={{
-            headerBackVisible: true,
-            headerBackTitle: 'Назад',
-            title: '',
-          }}
-        />
-        <Stack.Screen
-          name="Datepicker"
-          component={DatePickerView}
-          options={{
-            headerTitle: 'Календарь',
-            presentation: 'formSheet',
-          }}
-        />
-      </Stack.Navigator>
+      <ErrorBoundary>
+        <Stack.Navigator>
+          <Stack.Screen name="MeetingsList" component={AllMeetingsView} />
+          <Stack.Screen
+            name="Filters"
+            component={FilterSelectorView}
+            options={{
+              headerBackVisible: true,
+              presentation: 'containedModal',
+              headerTitle: () => FilterButton(false, currentFilter),
+            }}
+          />
+          <Stack.Screen
+            name="MeetingDetail"
+            component={MeetingView}
+            options={{
+              headerBackVisible: true,
+              headerBackTitle: 'Назад',
+              title: '',
+            }}
+          />
+          <Stack.Screen
+            name="Datepicker"
+            component={DatePickerView}
+            options={{
+              headerTitle: 'Календарь',
+              presentation: 'formSheet',
+            }}
+          />
+        </Stack.Navigator>
+      </ErrorBoundary>
     </NavigationContainer>
   );
 }

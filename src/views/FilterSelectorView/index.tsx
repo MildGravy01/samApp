@@ -14,13 +14,11 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 export const FilterSelectorView = (): JSX.Element => {
-  const {availableFilters, setFilter} = filterStore;
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+  const {availableFilters, setFilter} = filterStore;
   const handlePress = (id: string) => {
-    setFilter(id);
-    navigation.navigate('MeetingsList');
+    setFilter(id).finally(() => navigation.navigate('MeetingsList'));
   };
 
   const styles = StyleSheet.create({
