@@ -83,7 +83,6 @@ function App(): JSX.Element {
       const message = notification?.body
         ? String(notification.body)
         : String(data?.body);
-      console.log('MASSAGE', title, message);
       if (title && message) {
         PushNotification.localNotification({
           channelId: 'your-channel-id', // (required for Android)

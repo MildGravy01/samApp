@@ -28,11 +28,13 @@ class ScheduleStore {
   }
 
   async loadSchedule(setIsLoading = true) {
-    try {
+    const delayedIsLoading = setTimeout(() => {
       runInAction(() => {
         this.isScheduleLoading = !!setIsLoading;
         this.setNetworkError(null);
       });
+    }, 1000);
+    try {
       const scheduleResult = (
         await scheduleService.getSchedule(
           this.selectedDate,
@@ -51,11 +53,21 @@ class ScheduleStore {
         this.selectedWeekSchedule = scheduleResult.schedule;
         this.activeDays = activeDays;
       });
+
+      if (
+        this.selectedWeekSchedule?.length === 0 &&
+        this.availableWeeks &&
+        Number(this.availableWeeks?.length) > 0
+      ) {
+        this.setSelectedDate(new Date(this.availableWeeks[0].weekStart));
+      }
+
     } catch (err) {
       this.setNetworkError(
         'Не удалось загрузить расписание. Нет соединения с сервером, попробуйте позже.',
       );
     } finally {
+      clearTimeout(delayedIsLoading);
       runInAction(() => {
         this.isScheduleLoading = false;
       });
