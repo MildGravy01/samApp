@@ -36,7 +36,7 @@ class FilterStore {
       runInAction(() => {
         this.currentFilter = filter;
       });
-      await scheduleStore.loadSchedule(false);
+      await scheduleStore.loadSchedule(true);
     }
   }
 }

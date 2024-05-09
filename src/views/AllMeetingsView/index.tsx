@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
   },
 
   weekList: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 0,
+    marginHorizontal: 10,
     paddingVertical: 15,
     flexGrow: 0,
   },

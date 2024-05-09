@@ -1,6 +1,8 @@
 #import <RCTAppDelegate.h>
 #import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
+#import <React/RCTBridgeDelegate.h>
+@interface AppDelegate : RCTAppDelegate <UNUserNotificationCenterDelegate>
 
-@interface AppDelegate : RCTAppDelegate
 
 @end

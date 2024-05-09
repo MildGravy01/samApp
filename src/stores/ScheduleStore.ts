@@ -64,7 +64,7 @@ class ScheduleStore {
 
   setSelectedDate(day: Date) {
     this.selectedDate = new Date(day.toUTCString());
-    this.loadSchedule(false);
+    this.loadSchedule(true);
   }
 
   setNetworkError(error: string | null) {
