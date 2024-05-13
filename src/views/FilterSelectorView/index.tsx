@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,13 +13,17 @@ import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {observer} from 'mobx-react';
 
-export const FilterSelectorView = (): JSX.Element => {
+export const FilterSelectorView = observer((): JSX.Element => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const {availableFilters, setFilter} = filterStore;
+  const {availableFilters, setFilter, resetIsLoading} = filterStore;
   const handlePress = (id: string) => {
-    setFilter(id).finally(() => navigation.navigate('MeetingsList'));
+    setFilter(id).finally(() => {
+      navigation.navigate('MeetingsList');
+      resetIsLoading();
+    });
   };
 
   const styles = StyleSheet.create({
@@ -34,6 +39,7 @@ export const FilterSelectorView = (): JSX.Element => {
     },
     buttonText: {
       fontSize: 15,
+      marginRight: 10,
     },
   });
 
@@ -63,10 +69,11 @@ export const FilterSelectorView = (): JSX.Element => {
                 alignItems: 'center',
               }}>
               <Text style={styles.buttonText}>{filter.name}</Text>
+              {filter.isLoading && <ActivityIndicator />}
             </View>
           </View>
         </TouchableHighlight>
       ))}
     </ScrollView>
   );
-};
+});

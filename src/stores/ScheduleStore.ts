@@ -61,7 +61,6 @@ class ScheduleStore {
       ) {
         this.setSelectedDate(new Date(this.availableWeeks[0].weekStart));
       }
-
     } catch (err) {
       this.setNetworkError(
         'Не удалось загрузить расписание. Нет соединения с сервером, попробуйте позже.',

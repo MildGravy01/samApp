@@ -20,9 +20,8 @@ import {initCalendarLocale} from './views/DatePickerView/locale';
 import {MarkedDates} from 'react-native-calendars/src/types';
 import ErrorBoundary from './components/ErrorBoundary';
 import messaging from '@react-native-firebase/messaging';
-import {Alert, AppRegistry} from 'react-native';
+import {AppRegistry} from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 export type RootStackParamList = {
   MeetingsList: undefined;
@@ -56,15 +55,15 @@ async function requestUserPermission() {
 }
 
 // Получение токена устройства
-async function getFcmToken() {
-  await messaging().registerDeviceForRemoteMessages();
-  const fcmToken = await messaging().getToken();
-  if (fcmToken) {
-    console.log('Firebase Token is:', fcmToken);
-  } else {
-    console.log('Failed to get FCM token');
-  }
-}
+// async function getFcmToken() {
+//   await messaging().registerDeviceForRemoteMessages();
+//   const fcmToken = await messaging().getToken();
+//   if (fcmToken) {
+//     console.log('Firebase Token is:', fcmToken);
+//   } else {
+//     console.log('Failed to get FCM token');
+//   }
+// }
 
 function App(): JSX.Element {
   enableScreens();
@@ -72,7 +71,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     requestUserPermission();
-    getFcmToken();
+    //getFcmToken();
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       const {notification, data} = remoteMessage;

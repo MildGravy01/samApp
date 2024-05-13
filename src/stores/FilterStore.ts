@@ -12,6 +12,7 @@ export interface IFilter {
   name: string;
   icon: IconDefinition;
   color: string;
+  isLoading?: boolean;
 }
 class FilterStore {
   public availableFilters: IFilter[] = [
@@ -27,17 +28,38 @@ class FilterStore {
       availableFilters: observable,
       currentFilter: observable,
       setFilter: action.bound,
+      resetIsLoading: action.bound,
+      setIsLoadingFilter: action,
     });
   }
 
   async setFilter(filterId: string) {
     const filter = this.availableFilters.find(item => item.id === filterId);
     if (filter) {
+      this.setIsLoadingFilter(filter, true);
       runInAction(() => {
         this.currentFilter = filter;
       });
       await scheduleStore.loadSchedule(true);
     }
+  }
+
+  resetIsLoading() {
+    if (this.availableFilters) {
+      this.availableFilters = this.availableFilters.map(filter => {
+        return {...filter, isLoading: false};
+      });
+    }
+  }
+
+  setIsLoadingFilter(filter: IFilter, state: boolean) {
+    const modifiedFilterObject: IFilter = {...filter, isLoading: state};
+    this.availableFilters = this.availableFilters.map(filterObj => {
+      if (filter.id === filterObj.id) {
+        return modifiedFilterObject;
+      }
+      return filterObj;
+    });
   }
 }
 
