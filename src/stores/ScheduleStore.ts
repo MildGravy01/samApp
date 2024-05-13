@@ -44,7 +44,11 @@ class ScheduleStore {
       const activeDays = scheduleResult.activeDays?.reduce(
         (a, v) => ({
           ...a,
-          [getCalendarDateString(v)]: {marked: true, dotColor: 'red'},
+          [getCalendarDateString(v)]: {
+            marked: true,
+            dotColor: 'red',
+            disabled: false,
+          },
         }),
         {},
       );

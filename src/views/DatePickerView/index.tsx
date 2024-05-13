@@ -36,6 +36,7 @@ export const DatePickerView: React.FC<Props> = ({route}): JSX.Element => {
       maxDate={maxDate.toDateString()}
       onDayPress={handleDaySelect}
       markedDates={route.params.markedDates}
+      disabledByDefault
       theme={{
         todayBackgroundColor: '#FF3B30',
         todayDotColor: '#FFF',
