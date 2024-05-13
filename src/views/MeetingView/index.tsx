@@ -76,7 +76,7 @@ export const MeetingView: React.FC<Props> = ({route}) => {
               item.location ? `\nМесто: ${item.location}` : ''
             } ${
               item.description ? `\nИнфо: ${item.description}` : ''
-            } \nВремя: ${startTime} - ${endTime} \n${item.imgUrl ?? ''}`,
+            } \nВремя: ${startTime} - ${endTime} \n\n${item.imgUrl ?? ''}`,
           }),
         ),
     });
