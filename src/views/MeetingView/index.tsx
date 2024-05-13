@@ -1,9 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
-import {MeetingDetailScreenRouteProp} from '../../App';
+import {MeetingDetailScreenRouteProp, RootStackParamList} from '../../App';
 import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Share} from 'react-native';
+import {ShareButton} from '../../components/ShareButton';
 
 type Props = {
   route: MeetingDetailScreenRouteProp;
@@ -54,12 +58,30 @@ export const MeetingView: React.FC<Props> = ({route}) => {
     },
   });
   const {item} = route.params;
-
   const startTime = format(item.startTime, 'HH:mm', {locale: ru});
 
   const endTime = format(item.endTime, 'HH:mm', {locale: ru});
 
   const date = format(item.startTime, 'EEEE, d MMMM', {locale: ru});
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        ShareButton(() =>
+          Share.share({
+            title: item.title + ' ' + date,
+            message: `${date} \nМероприятие: ${item.title} ${
+              item.location ? `\nМесто: ${item.location}` : ''
+            } ${
+              item.description ? `\nИнфо: ${item.description}` : ''
+            } \nВремя: ${startTime} - ${endTime} \n${item.imgUrl ?? ''}`,
+          }),
+        ),
+    });
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.typeStyle}>{item.type.name}</Text>
