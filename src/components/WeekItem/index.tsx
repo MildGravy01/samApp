@@ -11,9 +11,14 @@ export interface IWeekItemProps {
 }
 
 const WeekItem = ({item, onPress, isSelected}: IWeekItemProps): JSX.Element => {
+  const isPast = new Date(item.weekEnd) <= new Date();
   const styles = StyleSheet.create({
     item: {
-      backgroundColor: isSelected ? '#007AFF' : '#ECECEC',
+      backgroundColor: isSelected
+        ? isPast
+          ? '#6a7e93'
+          : '#007AFF'
+        : '#ECECEC',
       flexDirection: 'row',
       paddingHorizontal: 10,
       paddingVertical: 8,

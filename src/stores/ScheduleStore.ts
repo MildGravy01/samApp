@@ -53,7 +53,30 @@ class ScheduleStore {
         {},
       );
       runInAction(() => {
-        this.availableWeeks = scheduleResult.availableWeeks;
+        const loadedWeeksSet = new Set<IWeek>();
+        scheduleResult.availableWeeks.forEach(week => {
+          if (new Date(week.weekEnd) >= new Date()) {
+            loadedWeeksSet.add(week);
+          }
+        });
+
+        if (this.selectedDate < new Date()) {
+          const selectedWeek = scheduleResult.availableWeeks.find(
+            week =>
+              new Date(week.weekStart) <= this.selectedDate &&
+              new Date(week.weekEnd) >= this.selectedDate,
+          );
+          if (selectedWeek) {
+            loadedWeeksSet.add(selectedWeek);
+          }
+        }
+        this.availableWeeks = Array.from(loadedWeeksSet).sort((a, b) => {
+          if (new Date(a.weekStart) < new Date(b.weekStart)) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
         this.selectedWeekSchedule = scheduleResult.schedule;
         this.activeDays = activeDays;
       });
