@@ -14,6 +14,7 @@ import {RootStackParamList} from '../../App';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {observer} from 'mobx-react';
+import { IconDefinition, IconLookup, findIconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const FilterSelectorView = observer((): JSX.Element => {
   const navigation =
@@ -43,12 +44,25 @@ export const FilterSelectorView = observer((): JSX.Element => {
     },
   });
 
+  const defineIcon = (iconName: string | null): IconDefinition => {
+    console.log("name", iconName);
+    if(!iconName){
+      const icon = findIconDefinition({prefix: 'fas', iconName: 'book'});
+      console.log('\n',icon, iconName,'\n', icon);
+      return icon;
+    }
+    const parts = iconName.split('/'); // f.e. fas/name
+    const icon = findIconDefinition({prefix: parts[0], iconName: parts[1]} as IconLookup);
+    console.log('\n', "ICON",icon, parts,'\n');
+    return icon;
+  }
+
   return (
     <ScrollView>
       {availableFilters.map(filter => (
         <TouchableHighlight
-          onPress={() => handlePress(filter.id)}
-          key={filter.id}>
+          onPress={() => handlePress(filter.type)}
+          key={filter.type}>
           <View style={styles.filterButton}>
             <View
               style={{
@@ -56,7 +70,7 @@ export const FilterSelectorView = observer((): JSX.Element => {
                 padding: 7,
                 borderRadius: 7,
               }}>
-              <FontAwesomeIcon icon={filter.icon} style={{color: 'white'}} />
+              <FontAwesomeIcon icon={defineIcon(filter?.icon)} style={{color: 'white'}} />
             </View>
             <View
               style={{

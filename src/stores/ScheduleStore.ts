@@ -38,7 +38,7 @@ class ScheduleStore {
       const scheduleResult = (
         await scheduleService.getSchedule(
           this.selectedDate,
-          filterStore.currentFilter.id,
+          filterStore.currentFilter.type,
         )
       ).data;
       const activeDays = scheduleResult.activeDays?.reduce(

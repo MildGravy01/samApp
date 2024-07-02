@@ -19,12 +19,6 @@ export const DatePickerView: React.FC<Props> = ({route}): JSX.Element => {
   }, [navigation]);
   const {setSelectedDate} = scheduleStore;
 
-  const today = new Date();
-  today.setMonth(today.getMonth() - 2);
-  const minDate = new Date(today);
-  today.setMonth(today.getMonth() + 4);
-  const maxDate = new Date(today);
-
   const handleDaySelect = (day: DateData) => {
     setSelectedDate(new Date(day.timestamp));
     navigation.goBack();
@@ -32,8 +26,6 @@ export const DatePickerView: React.FC<Props> = ({route}): JSX.Element => {
 
   return (
     <CalendarList
-      minDate={minDate.toDateString()}
-      maxDate={maxDate.toDateString()}
       onDayPress={handleDaySelect}
       markedDates={route.params.markedDates}
       disabledByDefault

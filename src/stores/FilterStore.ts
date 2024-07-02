@@ -1,5 +1,4 @@
 import {action, makeObservable, observable, runInAction} from 'mobx';
-import {IconDefinition} from '@fortawesome/free-solid-svg-icons';
 import {
   faClock,
   faBars,
@@ -7,20 +6,14 @@ import {
   faBookOpen,
 } from '@fortawesome/free-solid-svg-icons';
 import {scheduleStore} from './ScheduleStore';
-export interface IFilter {
-  id: string;
-  name: string;
-  icon: IconDefinition;
-  color: string;
+import { IFilter } from '../api/types';
+import {scheduleService} from '../api/ScheduleService';
+
+export interface IFilterObject extends IFilter{
   isLoading?: boolean;
 }
 class FilterStore {
-  public availableFilters: IFilter[] = [
-    {id: 'all', name: 'Все мероприятия', icon: faBars, color: '#FF0000'},
-    {id: 'lection', name: 'Лекции', icon: faBook, color: '#5AC8FA'},
-    {id: 'film', name: 'Просмотр фильмов', icon: faClock, color: '#FF9500'},
-    {id: 'meeting', name: 'Собрания', icon: faBookOpen, color: '#007AFF'},
-  ];
+  public availableFilters: IFilterObject[] = [{type: 'all', name: 'Все мероприятия', icon: `fas/list`, color: '#FF0000'}];
   public currentFilter: IFilter = this.availableFilters[0];
 
   constructor() {
@@ -31,10 +24,19 @@ class FilterStore {
       resetIsLoading: action.bound,
       setIsLoadingFilter: action,
     });
+    this.loadFilters();
+  }
+
+  async loadFilters(){
+    const filters = await scheduleService.getFilters();
+    if(!filters.data){
+      return;
+    }
+    this.availableFilters = [...this.availableFilters,...filters.data];
   }
 
   async setFilter(filterId: string) {
-    const filter = this.availableFilters.find(item => item.id === filterId);
+    const filter = this.availableFilters.find(item => item.type === filterId);
     if (filter) {
       this.setIsLoadingFilter(filter, true);
       runInAction(() => {
@@ -52,10 +54,10 @@ class FilterStore {
     }
   }
 
-  setIsLoadingFilter(filter: IFilter, state: boolean) {
-    const modifiedFilterObject: IFilter = {...filter, isLoading: state};
+  setIsLoadingFilter(filter: IFilterObject, state: boolean) {
+    const modifiedFilterObject: IFilterObject = {...filter, isLoading: state};
     this.availableFilters = this.availableFilters.map(filterObj => {
-      if (filter.id === filterObj.id) {
+      if (filter.type === filterObj.type) {
         return modifiedFilterObject;
       }
       return filterObj;

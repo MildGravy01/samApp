@@ -8,6 +8,13 @@ export interface IMeeting {
   description?: string;
 }
 
+export interface IFilter {
+  type: string;
+  name: string;
+  icon: string;
+  color: string;
+}
+
 export interface IScheduleObject {
   availableWeeks: IWeek[];
   schedule: ISchedule[];

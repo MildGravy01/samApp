@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, Image, Touchable, TouchableOpacity} from 'react-native';
 import {MeetingDetailScreenRouteProp, RootStackParamList} from '../../App';
 import {format} from 'date-fns';
 import {ru} from 'date-fns/locale';
@@ -8,7 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Share} from 'react-native';
 import {ShareButton} from '../../components/ShareButton';
-
+import ImageView from "react-native-image-viewing";
 type Props = {
   route: MeetingDetailScreenRouteProp;
 };
@@ -58,6 +58,7 @@ export const MeetingView: React.FC<Props> = ({route}) => {
     },
   });
   const {item} = route.params;
+  const [isImageVisible, setVisibleImage] = useState(false);
   const startTime = format(item.startTime, 'HH:mm', {locale: ru});
 
   const endTime = format(item.endTime, 'HH:mm', {locale: ru});
@@ -84,15 +85,24 @@ export const MeetingView: React.FC<Props> = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <ImageView
+        images={[{uri: item.imgUrl}]}
+        imageIndex={0}
+        visible={isImageVisible}
+        onRequestClose={() => setVisibleImage(false)}
+        />
       <Text style={styles.typeStyle}>{item.type.name}</Text>
       <View style={styles.titleContainer}>
         <View style={styles.titleImg}>
           {item.imgUrl ? (
+            <TouchableOpacity onPress={() => setVisibleImage(true)}>
             <Image
               width={100}
               height={100}
+              progressiveRenderingEnabled={true}
               source={{width: 100, height: 100, uri: item.imgUrl}}
             />
+            </TouchableOpacity>
           ) : (
             <Text style={{color: '#FFF'}}>Нет фото</Text>
           )}

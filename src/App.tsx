@@ -22,6 +22,10 @@ import ErrorBoundary from './components/ErrorBoundary';
 import messaging from '@react-native-firebase/messaging';
 import {AppRegistry} from 'react-native';
 import PushNotification from 'react-native-push-notification';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { fab } from '@fortawesome/free-brands-svg-icons'
 
 export type RootStackParamList = {
   MeetingsList: undefined;
@@ -68,7 +72,7 @@ async function requestUserPermission() {
 function App(): JSX.Element {
   enableScreens();
   initCalendarLocale();
-
+  library.add(fas, far, fab);
   useEffect(() => {
     requestUserPermission();
     //getFcmToken();
